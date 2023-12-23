@@ -25,29 +25,28 @@ def data_fetch(query):
     return data
 
 
-@app.route("/items", methods=["GET"])
+@app.route("/invoice", methods=["GET"])
 def get_customers():
-    data = data_fetch("""select * from invoice_line_items""")
+    data = data_fetch("""select * from invoices""")
     return make_response(jsonify(data), 200)
 
 
-@app.route("/items/<int:id>", methods=["GET"])
+@app.route("/invoice/<int:id>", methods=["GET"])
 def get_customer_by_id(id):
-    data = data_fetch("""SELECT * FROM invoice_line_items where order_item_id = {}""".format(id))
+    data = data_fetch("""SELECT * FROM invoices where invoice_number = {}""".format(id))
     return make_response(jsonify(data), 200)
 
-@app.route("/items", methods=["POST"])
+@app.route("/invoice", methods=["POST"])
 def add_customerr():
     cur = mysql.connection.cursor()
     info = request.get_json()
-    order_id = info["invoice_number"]
-    task = info["task_name"]
-    quantity = info["quantity"]
-    cost = info["cost"]
+    job_id = info["job_id"]
+    date = info["invoice_date"]
+    cost = info["total_cost"]
     details = info["other_details"]
     cur.execute(
-        """ INSERT INTO invoice_line_items (order_item_id, task_name,quantity,cost,other_details) VALUE (%s, %s, %s, %s, %s)""",
-        (order_id, task,quantity,cost,details),
+        """ INSERT INTO invoices (job_id, invoice_date,cost,other_details) VALUE (%s, %s, %s, %s)""",
+        (job_id,date,cost,details),
     )
     mysql.connection.commit()
     print("row(s) affected :{}".format(cur.rowcount))
@@ -55,51 +54,50 @@ def add_customerr():
     cur.close()
     return make_response(
         jsonify(
-            {"message": "Invoice line items added successfully", "rows_affected": rows_affected}
+            {"message": "Invoice added successfully", "rows_affected": rows_affected}
         ),
         201,
     )
 
 
-@app.route("/items/<int:id>", methods=["PUT"])
+@app.route("/invoice/<int:id>", methods=["PUT"])
 def update_cutomer(id):
     cur = mysql.connection.cursor()
     info = request.get_json()
-    order_id = info["invoice_number"]
-    task = info["task_name"]
-    quantity = info["quantity"]
-    cost = info["cost"]
+    job_id = info["job_id"]
+    date = info["invoice_date"]
+    cost = info["total_cost"]
     details = info["other_details"]
     cur.execute(
-        """ UPDATE invoice_line_items SET order_item_id = %s, task_name = %s,quantity = %s,cost = %s,other_details = %s WHERE order_item_id = %s """,
-        (order_id, task,quantity,cost,details, id),
+        """ UPDATE invoices SET job_id = %s, invoice_date = %s,cost = %s,other_details = %s WHERE invoice_number = %s """,
+        (job_id,date,cost,details, id),
     )
     mysql.connection.commit()
     rows_affected = cur.rowcount
     cur.close()
     return make_response(
         jsonify(
-            {"message": "Invoice line items updated successfully", "rows_affected": rows_affected}
+            {"message": "Invoice updated successfully", "rows_affected": rows_affected}
         ),
         200,
     )
 
 
-@app.route("/items/<int:id>", methods=["DELETE"])
+@app.route("/invoice/<int:id>", methods=["DELETE"])
 def delete_cutomer(id):
     cur = mysql.connection.cursor()
-    cur.execute(""" DELETE FROM invoice_line_items where order_item_id = %s """, (id,))
+    cur.execute(""" DELETE FROM invoices where invoice_number = %s """, (id,))
     mysql.connection.commit()
     rows_affected = cur.rowcount
     cur.close()
     return make_response(
         jsonify(
-            {"message": "Invoice line items deleted successfully", "rows_affected": rows_affected}
+            {"message": "Invoice deleted successfully", "rows_affected": rows_affected}
         ), 
         200,
     )
 
-@app.route("/items/format", methods=["GET"])
+@app.route("/invoice/format", methods=["GET"])
 def get_params():
     fmt = request.args.get('id')
     foo = request.args.get('aaaa')
