@@ -11,12 +11,9 @@ app.config["MYSQL_CURSORCLASS"] = "DictCursor"
 
 mysql = MySQL(app)
 
-
-
 @app.route("/")
 def hello_world():
     return "<p>Hello, World!</p>"
-
 
 def data_fetch(query):
     cur = mysql.connection.cursor()
@@ -111,6 +108,22 @@ def get_params():
     fmt = request.args.get('id')
     foo = request.args.get('aaaa')
     return make_response(jsonify({"format":fmt, "foo":foo}),200)
+
+@app.route("/customers/search", methods=["GET"])
+def search_customers():
+    # Get search parameters from the query string
+    first_name = request.args.get('first_name')
+    last_name = request.args.get('last_name')
+
+    # Build the SQL query dynamically based on the provided parameters
+    query = "SELECT * FROM customers WHERE 1=1"
+    if first_name:
+        query += f" AND customer_first_name LIKE '{first_name}%'"
+    if last_name:
+        query += f" AND customer_last_name LIKE '{last_name}%'"
+
+    data = data_fetch(query)
+    return make_response(jsonify(data), 200)
 
 if __name__ == "__main__":
     app.run(debug=True)

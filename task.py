@@ -102,5 +102,18 @@ def get_params():
     foo = request.args.get('aaaa')
     return make_response(jsonify({"format":fmt, "foo":foo}),200)
 
+@app.route("/task/search", methods=["GET"])
+def search_tasks():
+    # Get search parameters from the query string
+    task_name = request.args.get('task_name')
+
+    # Build the SQL query dynamically based on the provided parameters
+    query = "SELECT * FROM standard_tasks WHERE 1=1"
+    if task_name:
+        query += f" AND task_name LIKE '{task_name}%'"
+
+    data = data_fetch(query)
+    return make_response(jsonify(data), 200)
+
 if __name__ == "__main__":
     app.run(debug=True)

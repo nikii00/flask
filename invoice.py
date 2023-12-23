@@ -103,5 +103,18 @@ def get_params():
     foo = request.args.get('aaaa')
     return make_response(jsonify({"format":fmt, "foo":foo}),200)
 
+@app.route("/invoice/search", methods=["GET"])
+def search_invoice():
+    # Get search parameters from the query string
+    job_id = request.args.get('job_id')
+
+    # Build the SQL query dynamically based on the provided parameters
+    query = "SELECT * FROM invoices WHERE 1=1"
+    if job_id:
+        query += f" AND job_id = {job_id}"
+
+    data = data_fetch(query)
+    return make_response(jsonify(data), 200)
+
 if __name__ == "__main__":
     app.run(debug=True)
