@@ -36,27 +36,6 @@ def get_customer_by_id(id):
     data = data_fetch("""SELECT * FROM customers where customer_id = {}""".format(id))
     return make_response(jsonify(data), 200)
 
-
-# @app.route("/customers/<int:id>/movies", methods=["GET"])
-# def get_movies_by_actor(id):
-#     data = data_fetch(
-#         """
-#         SELECT film.title, film.release_year 
-#         FROM actor 
-#         INNER JOIN film_actor
-#         ON actor.actor_id = film_actor.actor_id 
-#         INNER JOIN film
-#         ON film_actor.film_id = film.film_id 
-#         WHERE actor.actor_id = {}
-#     """.format(
-#             id
-#         )
-#     )
-#     return make_response(
-#         jsonify({"actor_id": id, "count": len(data), "movies": data}), 200
-#     )
-
-
 @app.route("/customers", methods=["POST"])
 def add_customerr():
     cur = mysql.connection.cursor()
