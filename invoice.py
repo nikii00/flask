@@ -45,7 +45,7 @@ def add_customerr():
     cost = info["total_cost"]
     details = info["other_details"]
     cur.execute(
-        """ INSERT INTO invoices (job_id, invoice_date,cost,other_details) VALUE (%s, %s, %s, %s)""",
+        """ INSERT INTO invoices (job_id, invoice_date,total_cost,other_details) VALUE (%s, %s, %s, %s)""",
         (job_id,date,cost,details),
     )
     mysql.connection.commit()
@@ -69,7 +69,7 @@ def update_cutomer(id):
     cost = info["total_cost"]
     details = info["other_details"]
     cur.execute(
-        """ UPDATE invoices SET job_id = %s, invoice_date = %s,cost = %s,other_details = %s WHERE invoice_number = %s """,
+        """ UPDATE invoices SET job_id = %s, invoice_date = %s,total_cost = %s,other_details = %s WHERE invoice_number = %s """,
         (job_id,date,cost,details, id),
     )
     mysql.connection.commit()

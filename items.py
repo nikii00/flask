@@ -12,6 +12,7 @@ app.config["MYSQL_CURSORCLASS"] = "DictCursor"
 mysql = MySQL(app)
 
 
+
 @app.route("/")
 def hello_world():
     return "<p>Hello, World!</p>"
@@ -46,7 +47,7 @@ def add_customerr():
     cost = info["cost"]
     details = info["other_details"]
     cur.execute(
-        """ INSERT INTO invoice_line_items (order_item_id, task_name,quantity,cost,other_details) VALUE (%s, %s, %s, %s, %s)""",
+        """ INSERT INTO invoice_line_items (invoice_number, task_name,quantity,cost,other_details) VALUE (%s, %s, %s, %s, %s)""",
         (order_id, task,quantity,cost,details),
     )
     mysql.connection.commit()
@@ -71,7 +72,7 @@ def update_cutomer(id):
     cost = info["cost"]
     details = info["other_details"]
     cur.execute(
-        """ UPDATE invoice_line_items SET order_item_id = %s, task_name = %s,quantity = %s,cost = %s,other_details = %s WHERE order_item_id = %s """,
+        """ UPDATE invoice_line_items SET invoice_number = %s, task_name = %s,quantity = %s,cost = %s,other_details = %s WHERE order_item_id = %s """,
         (order_id, task,quantity,cost,details, id),
     )
     mysql.connection.commit()
